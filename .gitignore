@@ -1,0 +1,5 @@
+config.php
+bot.txt
+data/*.sqlite
+data/*.log
+*.log
