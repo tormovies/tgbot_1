@@ -47,33 +47,35 @@ while (true) {
             if (Db::isWaiting($userId, $chatId)) {
                 // Следующее сообщение после /son — текст сна
                 if ($text === '') {
-                    $tg->sendMessage($chatId, 'Пришли текст сна одним сообщением.');
+                    $tg->sendMessage($chatId, defined('BOT_MSG_SEND_DREAM') ? BOT_MSG_SEND_DREAM : 'Пришли текст сна одним сообщением.');
                     continue;
                 }
                 Db::clearWaiting($userId, $chatId);
                 $dreamText = $text;
+                echo date('Y-m-d H:i:s') . " [OK] Текст сна от user_id=$userId, отправка в DeepSeek...\n";
                 $interpretation = $deepseek->interpretDream($dreamText);
                 Db::addLog($userId, $username, $chatId, $chatType, $dreamText, $interpretation);
                 // Ответ только в личку
                 $tg->sendMessage($userId, $interpretation);
                 // В группе — короткое уведомление
                 if ($chatId !== $userId) {
-                    $tg->sendMessage($chatId, 'Расшифровка отправлена тебе в личные сообщения.');
+                    $tg->sendMessage($chatId, defined('BOT_MSG_SENT_TO_DM') ? BOT_MSG_SENT_TO_DM : 'Расшифровка отправлена тебе в личные сообщения.');
                 }
                 continue;
             }
 
             if ($text === '/son' || $text === '/start') {
                 if ($text === '/son') {
+                    echo date('Y-m-d H:i:s') . " [OK] Команда /son от user_id=$userId\n";
                     Db::setWaiting($userId, $chatId);
-                    $tg->sendMessage($chatId, 'Опиши сон в следующем сообщении.');
+                    $tg->sendMessage($chatId, defined('BOT_MSG_AFTER_SON') ? BOT_MSG_AFTER_SON : 'Опиши сон в следующем сообщении.');
                 } else {
-                    $tg->sendMessage($chatId, 'Привет. Чтобы расшифровать сон, отправь команду /son и затем опиши сон следующим сообщением.');
+                    $tg->sendMessage($chatId, defined('BOT_MSG_START') ? BOT_MSG_START : 'Привет. Чтобы расшифровать сон, отправь команду /son и затем опиши сон следующим сообщением.');
                 }
             }
         } catch (Throwable $e) {
-            echo date('Y-m-d H:i:s') . " Error: " . $e->getMessage() . "\n";
-            $tg->sendMessage($chatId, 'Произошла ошибка, попробуй позже.');
+            echo date('Y-m-d H:i:s') . " [ОШИБКА] " . $e->getMessage() . "\n";
+            $tg->sendMessage($chatId, defined('BOT_MSG_ERROR') ? BOT_MSG_ERROR : 'Произошла ошибка, попробуй позже.');
         }
     }
 }

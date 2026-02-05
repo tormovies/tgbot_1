@@ -12,12 +12,13 @@ class DeepSeek
 
     public function interpretDream(string $dreamText): string
     {
+        $systemPrompt = defined('DEEPSEEK_SYSTEM_PROMPT') ? DEEPSEEK_SYSTEM_PROMPT : 'Ты толкователь снов. Дай краткую и понятную расшифровку сна на русском языке. Пиши по делу, без лишних вступлений.';
         $body = [
             'model' => 'deepseek-chat',
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => 'Ты толкователь снов. Дай краткую и понятную расшифровку сна на русском языке. Пиши по делу, без лишних вступлений.',
+                    'content' => $systemPrompt,
                 ],
                 [
                     'role' => 'user',

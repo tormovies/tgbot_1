@@ -1,0 +1,9 @@
+# Разрешить доступ к папке и использовать index.php по умолчанию
+DirectoryIndex index.php
+Options -Indexes +FollowSymLinks
+Require all granted
+
+# Запретить доступ к конфигу и данным извне
+<FilesMatch "^(config\.php|\.htaccess)$">
+    Require all denied
+</FilesMatch>
