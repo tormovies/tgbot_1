@@ -44,21 +44,36 @@ class Db
                 PRIMARY KEY (user_id, chat_id)
             )
         ");
+        try {
+            $pdo->exec("ALTER TABLE state ADD COLUMN command_key TEXT DEFAULT 'son'");
+        } catch (Exception $e) {
+            /* колонка уже есть */
+        }
     }
 
-    public static function setWaiting($userId, $chatId)
+    public static function setWaiting($userId, $chatId, $commandKey = 'son')
     {
         $pdo = self::get();
-        $st = $pdo->prepare("REPLACE INTO state (user_id, chat_id, created_at) VALUES (?, ?, datetime('now'))");
+        $st = $pdo->prepare("REPLACE INTO state (user_id, chat_id, command_key, created_at) VALUES (?, ?, ?, datetime('now'))");
+        $st->execute(array($userId, $chatId, $commandKey));
+    }
+
+    /** Возвращает ключ команды (son, mood, …) или false, если не ждём ввод. */
+    public static function getWaitingCommandKey($userId, $chatId)
+    {
+        $pdo = self::get();
+        $st = $pdo->prepare("SELECT command_key FROM state WHERE user_id = ? AND chat_id = ?");
         $st->execute(array($userId, $chatId));
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return false;
+        }
+        return isset($row['command_key']) && $row['command_key'] !== '' ? $row['command_key'] : 'son';
     }
 
     public static function isWaiting($userId, $chatId)
     {
-        $pdo = self::get();
-        $st = $pdo->prepare("SELECT 1 FROM state WHERE user_id = ? AND chat_id = ?");
-        $st->execute(array($userId, $chatId));
-        return (bool) $st->fetchColumn();
+        return self::getWaitingCommandKey($userId, $chatId) !== false;
     }
 
     public static function clearWaiting($userId, $chatId)

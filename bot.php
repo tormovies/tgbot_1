@@ -45,15 +45,17 @@ while (true) {
 
         try {
             if (Db::isWaiting($userId, $chatId)) {
-                // Следующее сообщение после /son — текст сна
+                $waitKey = Db::getWaitingCommandKey($userId, $chatId);
                 if ($text === '') {
-                    $tg->sendMessage($chatId, defined('BOT_MSG_SEND_DREAM') ? BOT_MSG_SEND_DREAM : 'Пришли текст сна одним сообщением.');
+                    $msgSend = ($waitKey === 'peremen' && defined('BOT_MSG_SEND_PEREMEN')) ? BOT_MSG_SEND_PEREMEN : (defined('BOT_MSG_SEND_DREAM') ? BOT_MSG_SEND_DREAM : 'Пришли текст одним сообщением.');
+                    $tg->sendMessage($chatId, $msgSend);
                     continue;
                 }
+                $commandKey = Db::getWaitingCommandKey($userId, $chatId);
                 Db::clearWaiting($userId, $chatId);
                 $dreamText = $text;
-                echo date('Y-m-d H:i:s') . " [OK] Текст сна от user_id=$userId, отправка в DeepSeek...\n";
-                $interpretation = $deepseek->interpretDream($dreamText);
+                echo date('Y-m-d H:i:s') . " [OK] Текст от user_id=$userId (команда=$commandKey), отправка в DeepSeek...\n";
+                $interpretation = $deepseek->interpretDream($dreamText, $commandKey !== false ? $commandKey : 'son');
                 Db::addLog($userId, $username, $chatId, $chatType, $dreamText, $interpretation);
                 // Ответ только в личку
                 $tg->sendMessage($userId, $interpretation);
@@ -64,13 +66,17 @@ while (true) {
                 continue;
             }
 
-            if ($text === '/son' || $text === '/start') {
+            if ($text === '/peremen') {
+                echo date('Y-m-d H:i:s') . " [OK] Команда /peremen от user_id=$userId\n";
+                Db::setWaiting($userId, $chatId, 'peremen');
+                $tg->sendMessage($chatId, defined('BOT_MSG_AFTER_PEREMEN') ? BOT_MSG_AFTER_PEREMEN : 'Опиши ситуацию или перемены в следующем сообщении.');
+            } elseif ($text === '/son' || $text === '/start') {
                 if ($text === '/son') {
                     echo date('Y-m-d H:i:s') . " [OK] Команда /son от user_id=$userId\n";
-                    Db::setWaiting($userId, $chatId);
+                    Db::setWaiting($userId, $chatId, 'son');
                     $tg->sendMessage($chatId, defined('BOT_MSG_AFTER_SON') ? BOT_MSG_AFTER_SON : 'Опиши сон в следующем сообщении.');
                 } else {
-                    $tg->sendMessage($chatId, defined('BOT_MSG_START') ? BOT_MSG_START : 'Привет. Чтобы расшифровать сон, отправь команду /son и затем опиши сон следующим сообщением.');
+                    $tg->sendMessage($chatId, defined('BOT_MSG_START') ? BOT_MSG_START : 'Привет. Команды: /son — сон, /peremen — перемены.');
                 }
             }
         } catch (Exception $e) {
