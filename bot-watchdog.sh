@@ -5,6 +5,13 @@
 BOT_DIR="/home/admin/domains/website.com.ru/public_html/tgbot98"
 # Или подставь свой путь: BOT_DIR="$(dirname "$0")"
 
+if [[ -f "$BOT_DIR/.proxy.env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    . "$BOT_DIR/.proxy.env"
+    set +a
+fi
+
 if ! pgrep -f "php bot.php" > /dev/null; then
     cd "$BOT_DIR" || exit 1
     nohup php bot.php >> data/bot.log 2>&1 &

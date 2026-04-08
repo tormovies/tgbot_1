@@ -11,6 +11,8 @@ if (!is_file($config)) {
     exit(1);
 }
 require $config;
+require __DIR__ . '/lib/ProxyEnv.php';
+load_proxy_env_file(__DIR__ . '/.proxy.env');
 require __DIR__ . '/lib/Db.php';
 require __DIR__ . '/lib/Telegram.php';
 require __DIR__ . '/lib/DeepSeek.php';

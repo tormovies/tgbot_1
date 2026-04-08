@@ -6,10 +6,25 @@ class Telegram
 {
     private $base = 'https://api.telegram.org/bot';
     private $token;
+    /** @var string пусто = без прокси */
+    private $httpProxy;
 
     public function __construct($token)
     {
         $this->token = $token;
+        $p = getenv('TELEGRAM_HTTP_PROXY');
+        if ($p === false) {
+            $p = '';
+        }
+        $p = trim($p);
+        if ($p === '') {
+            $p = getenv('HTTPS_PROXY');
+            if ($p === false) {
+                $p = '';
+            }
+            $p = trim($p);
+        }
+        $this->httpProxy = $p;
     }
 
     private function request($method, $params = array(), $get = false)
@@ -20,6 +35,10 @@ class Telegram
         }
         $ch = curl_init($url);
         $opts = array(CURLOPT_RETURNTRANSFER => true);
+        if ($this->httpProxy !== '') {
+            $opts[CURLOPT_PROXY] = $this->httpProxy;
+            $opts[CURLOPT_HTTPPROXYTUNNEL] = true;
+        }
         if ($get) {
             $opts[CURLOPT_HTTPGET] = true;
         } else {
