@@ -6,10 +6,10 @@
 export BOT_DIR=/полный/путь/к/папке/бота
 ```
 
-Типичный путь на сервере **website.com.ru** (DirectAdmin): папка бота в `public_html` — часто **`98`** (проверь: `ls /home/admin/domains/website.com.ru/public_html`).
+Типичный путь на сервере **website.com.ru** (DirectAdmin): папка бота в `public_html` — у этого проекта обычно **`tgbot98`** (проверь: `ls /home/admin/domains/website.com.ru/public_html`).
 
 ```bash
-export BOT_DIR=/home/admin/domains/website.com.ru/public_html/98
+export BOT_DIR=/home/admin/domains/website.com.ru/public_html/tgbot98
 ```
 
 Дальше все команды используют `$BOT_DIR`.
@@ -41,8 +41,8 @@ git pull origin main
 
 ```bash
 cd /home/admin/domains/website.com.ru/public_html
-git clone https://github.com/tormovies/tgbot_1.git 98
-cd 98
+git clone https://github.com/tormovies/tgbot_1.git tgbot98
+cd tgbot98
 cp config.sample.php config.php
 nano config.php   # заполнить BOT_TOKEN, DEEPSEEK_API_KEY, ADMIN_*
 ```
@@ -92,7 +92,7 @@ tail -5 "$BOT_DIR/data/bot.log"
 ## Кратко: только обновление после git pull
 
 ```bash
-export BOT_DIR=/home/admin/domains/website.com.ru/public_html/98
+export BOT_DIR=/home/admin/domains/website.com.ru/public_html/tgbot98
 cd "$BOT_DIR"
 git pull origin main
 pkill -f "php bot.php"

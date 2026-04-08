@@ -1,10 +1,10 @@
 #!/bin/bash
 # Запуск на сервере: bash fix-403.sh (из каталога, где лежит скрипт, или указать путь)
-# Исправляет права для доступа Apache к папке бота (по умолчанию website.com.ru /98)
+# Исправляет права для доступа Apache к папке бота (по умолчанию website.com.ru /tgbot98)
 
 set -e
 BASE="${1:-/home/admin/domains/website.com.ru/public_html}"
-TG="$BASE/98"
+TG="$BASE/tgbot98"
 
 echo "Путь к сайту: $BASE"
 echo "Путь к боту:  $TG"
@@ -37,5 +37,5 @@ find "$BASE" -type f -exec chmod 644 {} \;
 # Папка data — запись для скриптов
 chmod 755 "$TG/data"
 
-echo "Готово. Проверь в браузере: https://website.com.ru/98/"
+echo "Готово. Проверь в браузере: https://website.com.ru/tgbot98/"
 echo "Если 403 остаётся — смотри HTACCESS_403.md (конфиг Apache, SELinux)."
