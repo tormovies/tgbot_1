@@ -6,6 +6,9 @@
 export BOT_DIR=/полный/путь/к/папке/бота
 ```
 
+Пример для **website.com.ru**, папка **`98`**:  
+`export BOT_DIR=/home/admin/domains/website.com.ru/public_html/98`
+
 ---
 
 ## 1. Процесс запущен?
