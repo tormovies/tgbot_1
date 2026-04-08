@@ -13,7 +13,7 @@
 В **PowerShell** (не cmd):
 
 ```powershell
-cd "c:\projects\telegramm bot"
+cd "C:\путь\к\вашей\папке\проекта"
 # Если была ошибка "could not lock config" — удалите папку .git:
 Remove-Item -Recurse -Force .git -ErrorAction SilentlyContinue
 git init

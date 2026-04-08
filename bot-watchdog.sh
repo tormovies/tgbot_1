@@ -2,8 +2,10 @@
 # Сторож: если бот не запущен — запускает его.
 # Запускать по cron каждые 5 минут: */5 * * * * /path/to/bot-watchdog.sh
 
-BOT_DIR="/home/admin/domains/website.com.ru/public_html/tgbot98"
-# Или подставь свой путь: BOT_DIR="$(dirname "$0")"
+# Каталог с bot.php: по умолчанию — папка, где лежит этот скрипт (положи watchdog в корень бота).
+# Если скрипт вызывается из другого места — раскомментируй и задай путь вручную:
+# BOT_DIR="/полный/путь/к/боту"
+BOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [[ -f "$BOT_DIR/.proxy.env" ]]; then
     set -a

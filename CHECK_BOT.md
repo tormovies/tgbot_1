@@ -1,5 +1,13 @@
 # Бот не отвечает — проверка по шагам
 
+Задай каталог бота (где лежит `bot.php`):
+
+```bash
+export BOT_DIR=/полный/путь/к/папке/бота
+```
+
+---
+
 ## 1. Процесс запущен?
 
 ```bash
@@ -9,7 +17,7 @@ pgrep -af bot.php
 Должна быть строка с `php bot.php`. Если пусто — бот не запущен, запусти:
 
 ```bash
-cd ~/bot.snovidec.ru/public_html/tgbot98
+cd "$BOT_DIR"
 nohup php bot.php >> data/bot.log 2>&1 &
 ```
 
@@ -18,7 +26,7 @@ nohup php bot.php >> data/bot.log 2>&1 &
 ## 2. Лог — есть ли ошибки?
 
 ```bash
-tail -50 ~/bot.snovidec.ru/public_html/tgbot98/data/bot.log
+tail -50 "$BOT_DIR/data/bot.log"
 ```
 
 Ищи строки с `error`, `Error`, `ОШИБКА` или `getUpdates error`. Пришли вывод.
@@ -31,7 +39,7 @@ tail -50 ~/bot.snovidec.ru/public_html/tgbot98/data/bot.log
 
 ```bash
 pkill -f "php bot.php"
-cd ~/bot.snovidec.ru/public_html/tgbot98
+cd "$BOT_DIR"
 php bot.php
 ```
 
@@ -63,7 +71,7 @@ php bot.php
 Проверь, что в `config.php` указан правильный BOT_TOKEN от @BotFather (без пробелов, целиком). Файл не в репозитории — он только на сервере.
 
 ```bash
-grep BOT_TOKEN ~/bot.snovidec.ru/public_html/tgbot98/config.php
+grep BOT_TOKEN "$BOT_DIR/config.php"
 ```
 
 (Пароль не показывай никому — просто убедись, что строка не пустая и токен похож на настоящий.)
